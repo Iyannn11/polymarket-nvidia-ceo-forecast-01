@@ -1,8 +1,8 @@
 // Entry for polymarket-nvidia-ceo-forecast-01: empirical-volatility random-walk forecast.
-// For each market: sigma = mean |1-min diff| over the last 360 minutes, scaled 1.0,
+// For each market: sigma = mean |1-min diff| over the last 360 minutes, scaled 0.9,
 // floored at 0.0005. Quantiles = last price + z_tau * sigma * sqrt(h), clamped to
 // [0,1], rounded to 6 decimals. Node 22, stdlib only, offline.
-// Practice backtest: 0.279 (tails 1.0) / 0.278 (scale 0.9) vs house persistence 0.364 pinball loss.
+// Practice backtest: 0.279 (scale 1.0) / 0.278 (scale 0.9) vs house persistence 0.364.
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 
@@ -14,6 +14,7 @@ const Z = [-1.644854, -0.67449, 0, 0.67449, 1.644854];
 const WINDOW = 360;
 const SCALE = 0.9;
 const FLOOR = 0.0005;
+const DEADLINE_GUARD = true;
 
 interface CaseMarket { id: string; prices: number[]; }
 interface Case { horizon_minutes: number; quantiles: number[]; markets: CaseMarket[]; }
